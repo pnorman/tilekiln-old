@@ -17,6 +17,9 @@ setup(
         'jinja2',
         'psycopg2'
     ],
+    entry_points={
+        'console_scripts': ['tilekiln-generate=tilekiln.scripts.generate:cli']
+    },
     setup_requires=[
         'pytest-runner',
         'flake8'
