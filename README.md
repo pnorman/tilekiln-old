@@ -26,7 +26,7 @@ Tilekiln requires a PostGIS database with data loaded to generate vector tiles, 
 
 - PostgreSQL 9.5+
 - PostGIS 2.4+, 3.0 is strongly recommended
-- Python 3.5+
+- Python 3.6+
 
 ## Usage
 

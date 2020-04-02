@@ -30,5 +30,5 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: GIS"
     ],
-    python_requires="~=3.5"
+    python_requires="~=3.6"
 )
