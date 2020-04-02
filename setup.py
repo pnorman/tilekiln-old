@@ -22,7 +22,7 @@ setup(
         'flake8'
     ],
     tests_require=['pytest'],
-    classifier=[
+    classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Environment :: Console",
         "Programming Language :: Python :: 3",
