@@ -20,7 +20,6 @@ class Generator:
         db = tilekiln.database.Database(psycopg2.connect(**self.dbconn))
         filesystem = fs.open_fs(self.storage_location, create=True)
 
-        print("Starting generation of {} tiles".format(len(tiles)))
         for tile in tiles:
             tiledata = b''
 
