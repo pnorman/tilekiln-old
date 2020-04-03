@@ -1,0 +1,27 @@
+SELECT
+    ST_AsMVTGeom(way, {{bbox}}) AS way,
+    'ocean' AS water
+  FROM simplified_water_polygons
+  WHERE way && {{bbox}}
+UNION ALL
+SELECT
+    ST_AsMVTGeom(way, {{bbox}}) AS way,
+    water
+  FROM planet_osm_polygon
+  WHERE way && {{bbox}}
+    AND  (waterway IN ('dock', 'riverbank')
+    OR landuse IN ('reservoir', 'basin')
+    OR "natural" IN ('water', 'glacier'))
+{% if zoom <= 0 %}
+    AND way_area > 150000000000
+{% elif zoom <= 1 %}
+    AND way_area > 40000000000
+{% elif zoom <= 2 %}
+    AND way_area > 10000000000
+{% elif zoom <= 3 %}
+    AND way_area > 2500000000
+{% elif zoom <= 4 %}
+    AND way_area > 600000000
+{% elif zoom <= 5 %}
+    AND way_area > 150000000
+{% endif %}
