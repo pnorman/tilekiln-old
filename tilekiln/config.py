@@ -62,6 +62,8 @@ class Config:
                 tj_layer = {"id": layer.id}
                 if layer.description is not None:
                     tj_layer["description"] = layer.description
+                tj_layer["minzoom"] = layer.minzoom
+                tj_layer["maxzoom"] = layer.maxzoom
 
                 tj_layer["fields"] = layer.fields
 

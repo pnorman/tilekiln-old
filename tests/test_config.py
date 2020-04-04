@@ -130,17 +130,23 @@ class TestConfig(TestCase):
 
             self.assertEqual(water["id"], "water")
             self.assertEqual(water["description"], "Waterbody and ocean areas")
+            self.assertEqual(water["minzoom"], 0)
+            self.assertEqual(water["maxzoom"], 8)
             self.assertEqual(water["fields"],
                              {"water": "Type of water"})
 
             self.assertEqual(admin["id"], "admin")
             self.assertEqual(admin["description"], "Administrative boundaries")
+            self.assertEqual(admin["minzoom"], 1)
+            self.assertEqual(admin["maxzoom"], 10)
             self.assertEqual(admin["fields"],
                              {"admin_level": "Level of admin boundary"})
 
             self.assertEqual(country_names["id"], "country_names")
             self.assertEqual(country_names["description"],
                              "Points for country names")
+            self.assertEqual(country_names["minzoom"], 3)
+            self.assertEqual(country_names["maxzoom"], 14)
             self.assertEqual(country_names["fields"],
                              {"area": "Area of country",
                               "name": "Name of country"})
