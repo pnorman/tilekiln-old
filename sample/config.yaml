@@ -3,7 +3,6 @@
 # https://github.com/gravitystorm/openstreetmap-carto/pull/4092
 metadata:
   id: v1 # Required, used internally by Tilekiln
-  attribution: (C) OpenStreetMap # Optional attribution
   bounds: [-180, -85.05112877980659, 180, 85.0511287798066 ] # Optional bounds
   name: name for tilejson, optional
   description: description for tilejson, optional
