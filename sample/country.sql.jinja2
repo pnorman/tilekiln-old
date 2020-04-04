@@ -5,17 +5,7 @@ SELECT
     AND boundary = 'administrative'
     AND admin_level = '2'
     AND name IS NOT NULL
-{% if zoom <= 2 %}
-    AND way_area > 150000000000
-{% elif zoom <= 3 %}
-    AND way_area > 40000000000
-{% elif zoom <= 4 %}
-    AND way_area > 10000000000
-{% elif zoom <= 5 %}
-    AND way_area > 2500000000
-{% elif zoom <= 6 %}
-    AND way_area > 600000000
-{% elif zoom <= 7 %}
-    AND way_area > 150000000
+{% if zoom <= 12 %}
+    AND way_area > {{tile_area}}*0.05^2
 {% endif %}
     AND osm_id < 0
