@@ -18,7 +18,8 @@ setup(
         'psycopg2'
     ],
     entry_points={
-        'console_scripts': ['tilekiln-generate=tilekiln.scripts.generate:cli']
+        'console_scripts': ['tilekiln-generate=tilekiln.scripts.generate:cli',
+                            'tilekiln-tilejson=tilekiln.scripts.tilejson:cli']
     },
     setup_requires=[
         'pytest-runner',

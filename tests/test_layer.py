@@ -142,6 +142,17 @@ class TestLayer(TestCase):
 
         self.assertIsNone(layer.definition_for_zoom(9), None)
 
+    def test_fields(self):
+        fs = MemoryFS()
+        fs.writetext('1.sql', 'select 1')
+        layer = Layer("water",
+                      {"fields": {"water": "type of water"},
+                       "description": "Waterbody and ocean areas",
+                       "sql": [{"minzoom": 0, "maxzoom": 4, "file": "1.sql"}]
+                       }, fs)
+
+        self.assertEqual(layer.fields["water"], "type of water")
+
     def test_render_tile(self):
         fs = MemoryFS()
         fs.writetext('1.sql', 'select 1')

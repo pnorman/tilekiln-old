@@ -1,5 +1,6 @@
 import yaml
 import tilekiln.layer
+import json
 
 
 class Config:
@@ -24,3 +25,46 @@ class Config:
         # Make vector_layers optional. TODO: Reconsider
         for id, l in config.get("vector_layers", {}).items():
             self.layers.append(tilekiln.layer.Layer(id, l, fs))
+
+    def tilejson(self, url):
+        '''Returns a tilejson as a string for the config
+        '''
+
+        # See https://github.com/mapbox/tilejson-spec/tree/master/2.2.0
+
+        # Work by assembling a dictionary then turning it into json
+
+        # Required properties
+        tj = {"tilejson": "2.2.0",
+              "format": "pbf",
+              "scheme": "xyz",
+              "tiles": [url.replace("{id}", self.id)]}
+
+        if self.name is not None:
+            tj["name"] = self.name
+        if self.description is not None:
+            tj["description"] = self.description
+        if self.attribution is not None:
+            tj["attribution"] = self.attribution
+        if self.version is not None:
+            tj["version"] = self.version
+        if self.bounds is not None:
+            tj["bounds"] = self.bounds
+        if self.center is not None:
+            tj["center"] = self.center
+
+        if len(self.layers) > 0:
+            tj["minzoom"] = min([layer.minzoom for layer in self.layers])
+            tj["maxzoom"] = max([layer.maxzoom for layer in self.layers])
+
+            tj["vector_layers"] = []
+            for layer in self.layers:
+                tj_layer = {"id": layer.id}
+                if layer.description is not None:
+                    tj_layer["description"] = layer.description
+
+                tj_layer["fields"] = layer.fields
+
+                tj["vector_layers"].append(tj_layer)
+
+        return json.dumps(tj, sort_keys=True, indent=4)
