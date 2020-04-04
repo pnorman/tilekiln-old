@@ -1,6 +1,6 @@
 from unittest import TestCase
 from tilekiln.definition import Definition, wrap_sql, zxy_to_projected
-from tilekin.definition import bbox, tile_length, tile_area
+from tilekiln.definition import bbox, tile_length, tile_area
 
 
 class TestDefinition(TestCase):
