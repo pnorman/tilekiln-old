@@ -10,20 +10,24 @@ class Definition:
 
     This class does the work of producing the SQL query for a particular tile.
     '''
-    def __init__(self, id, raw_sql, minzoom, maxzoom):
+    def __init__(self, id, raw_sql, minzoom, maxzoom, extent):
         self.id = id
         self.raw_sql = raw_sql
         self.minzoom = minzoom
         self.maxzoom = maxzoom
 
+        self.extent = extent or 4096
+
     def __eq__(self, other):
         return (self.id == other.id and self.raw_sql == other.raw_sql and
                 self.minzoom == other.minzoom and
-                self.maxzoom == other.maxzoom)
+                self.maxzoom == other.maxzoom and
+                self.extent == other.extent)
 
     def __repr__(self):
-        return 'Definition({}, "{}", {}, {}'.format(self.id, self.raw_sql,
-                                                    self.minzoom, self.maxzoom)
+        return ('Definition({}, "{}", {}, {}, {})'
+                .format(self.id, self.raw_sql, self.minzoom, self.maxzoom,
+                        self.extent))
 
     def render_sql(self, tile):
         '''Generates the SQL for a layer
@@ -42,6 +46,7 @@ class Definition:
         return j2_template.render(zoom=zoom, x=x, y=y,
                                   tile_length=tile_length(zoom),
                                   tile_area=tile_area(zoom),
+                                  extent=self.extent,
                                   bbox=bbox(zoom, x, y))
 
 
@@ -49,7 +54,7 @@ class Definition:
 def wrap_sql(sql, layer_id):
     return ('''WITH mvtgeom AS\n(\n''' + sql + '''\n)\n''' +
             '''SELECT ST_AsMVT(mvtgeom.*, '{}', '''.format(layer_id) +
-            '''4096, 'way', NULL)\n'''
+            '''{{extent}}, 'way', NULL)\n'''
             '''FROM mvtgeom;''')
 
 

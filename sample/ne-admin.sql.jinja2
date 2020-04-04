@@ -1,5 +1,5 @@
 SELECT
-    ST_AsMVTGeom(way, {{bbox}}) AS way,
+    ST_AsMVTGeom(way, {{bbox}}, {{extent}}) AS way,
     4 AS admin_level
   FROM ne_110m_admin_0_boundary_lines_land
   WHERE way && {{bbox}}

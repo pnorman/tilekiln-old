@@ -1,5 +1,5 @@
 SELECT
-    ST_AsMVTGeom(ST_PointOnSurface(way), {{bbox}}) AS way
+    ST_AsMVTGeom(ST_PointOnSurface(way), {{bbox}}, {{extent}}) AS way
   FROM planet_osm_polygon
   WHERE way && {{bbox}}
     AND boundary = 'administrative'

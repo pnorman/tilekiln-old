@@ -1,5 +1,5 @@
 SELECT
-    ST_AsMVTGeom(way, {{bbox}}) AS way,
+    ST_AsMVTGeom(way, {{bbox}}, {{extent}}) AS way,
     admin_level::integer
 {% if zoom <= 10 %}
   FROM planet_osm_roads
