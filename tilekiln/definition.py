@@ -1,6 +1,10 @@
 import jinja2 as j2
 
 
+# Invariants of web mercator
+HALF_WORLD = 20037508.34
+
+
 class Definition:
     ''' Definition of a layer in a particular zoom range.
 
@@ -36,6 +40,8 @@ class Definition:
         # TODO: Add parameters for all ST_AsMVT and ST_AsMVTGeom options
         j2_template = j2.Template(wrap_sql(self.raw_sql, self.id))
         return j2_template.render(zoom=zoom, x=x, y=y,
+                                  tile_length=tile_length(zoom),
+                                  tile_area=tile_area(zoom),
                                   bbox=bbox(zoom, x, y))
 
 
@@ -57,10 +63,18 @@ def bbox(zoom, x, y):
             .format(ll[0], ur[1], ur[0], ll[1]))
 
 
+def tile_length(zoom):
+    # -1 for half vs full world
+    return HALF_WORLD/(2**(zoom-1))
+
+
+def tile_area(zoom):
+    return tile_length(zoom)**2
+
+
 # ref https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
 #     https://github.com/mapbox/postgis-vt-util/blob/master/src/TileBBox.sql
 #     and others.
 def zxy_to_projected(zoom, x, y):
-    HALF_WORLD = 20037508.34
     return [HALF_WORLD*(2*x/2**zoom - 1),
             HALF_WORLD*(1-2*y/2**zoom)]

@@ -1,5 +1,6 @@
 from unittest import TestCase
-from tilekiln.definition import Definition, wrap_sql, zxy_to_projected, bbox
+from tilekiln.definition import Definition, wrap_sql, zxy_to_projected
+from tilekin.definition import bbox, tile_length, tile_area
 
 
 class TestDefinition(TestCase):
@@ -38,6 +39,14 @@ class TestDefinition(TestCase):
 
         self.assertEqual(zxy_to_projected(1, 1, 1), [0, 0])
 
+    def test_tile_length(self):
+        self.assertEqual(tile_length(0), 40075016.68)
+        self.assertEqual(tile_length(1), 20037508.34)
+
+    def test_tile_area(self):
+        self.assertEqual(tile_area(0), 1606006961902278.2)
+        self.assertEqual(tile_area(1), 401501740475569.56)
+
     def test_bbox(self):
         self.assertEqual(bbox(0, 0, 0),
                          "ST_MakeEnvelope(-20037508.34, -20037508.34, "
@@ -53,3 +62,11 @@ class TestDefinition(TestCase):
         d = Definition("water", "bbox: {{bbox}}", 0, 4)
         self.assertEqual(d.render_sql((3, 2, 1)),
                          wrap_sql("bbox: " + bbox(3, 2, 1), "water"))
+
+        d = Definition("water", "length: {{tile_length}}", 0, 4)
+        self.assertEqual(d.render_sql((1, 0, 0)),
+                         wrap_sql("length: " + str(tile_length(1)), "water"))
+
+        d = Definition("water", "area: {{tile_area}}", 0, 4)
+        self.assertEqual(d.render_sql((1, 0, 0)),
+                         wrap_sql("area: " + str(tile_area(1)), "water"))
