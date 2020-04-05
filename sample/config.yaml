@@ -17,6 +17,7 @@ vector_layers:
     sql:
     - minzoom: 0
       maxzoom: 8
+      extent: 2048
       file: water.sql.jinja2
   admin:
     fields:

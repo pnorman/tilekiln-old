@@ -1,6 +1,7 @@
 from unittest import TestCase
-from tilekiln.definition import Definition, wrap_sql, zxy_to_projected
-from tilekiln.definition import bbox, tile_length, tile_area
+from tilekiln.definition import Definition, wrap_sql, zxy_to_projected, bbox
+from tilekiln.definition import tile_length, tile_area
+from tilekiln.definition import coordinate_length, coordinate_area
 
 
 class TestDefinition(TestCase):
@@ -45,9 +46,21 @@ class TestDefinition(TestCase):
         self.assertEqual(tile_length(0), 40075016.68)
         self.assertEqual(tile_length(1), 20037508.34)
 
+    def test_coordinate_length(self):
+        self.assertEqual(coordinate_length(0, 256), 156543.03390625)
+        self.assertEqual(coordinate_length(0, 1024), 39135.7584765625)
+        self.assertEqual(coordinate_length(1, 256), 78271.516953125)
+        self.assertEqual(coordinate_length(1, 1024), 19567.87923828125)
+
     def test_tile_area(self):
         self.assertEqual(tile_area(0), 1606006961902278.2)
         self.assertEqual(tile_area(1), 401501740475569.56)
+
+    def test_coordinate_area(self):
+        self.assertEqual(coordinate_area(0, 256), 24505721464.573338)
+        self.assertEqual(coordinate_area(0, 1024), 1531607591.5358336)
+        self.assertEqual(coordinate_area(1, 256), 6126430366.143334)
+        self.assertEqual(coordinate_area(1, 1024), 382901897.8839584)
 
     def test_bbox(self):
         self.assertEqual(bbox(0, 0, 0),
@@ -81,4 +94,20 @@ class TestDefinition(TestCase):
         d = Definition("water", "extent: {{extent}}", 0, 4, 1024)
         self.assertEqual(d.render_sql((1, 0, 0)),
                          wrap_sql("extent: 1024", "water")
+                         # Only replace once so if the j2 failed to render it
+                         # doesn't pass
                          .replace("{{extent}}", "1024", 1))
+
+        d = Definition("water", "coordinate_length: {{coordinate_length}}",
+                       0, 4, None)
+        self.assertEqual(d.render_sql((1, 0, 0)),
+                         wrap_sql("coordinate_length: " +
+                                  str(coordinate_length(1, 4096)), "water")
+                         .replace("{{extent}}", "4096"))
+
+        d = Definition("water", "coordinate_area: {{coordinate_area}}",
+                       0, 4, None)
+        self.assertEqual(d.render_sql((1, 0, 0)),
+                         wrap_sql("coordinate_area: " +
+                                  str(coordinate_area(1, 4096)), "water")
+                         .replace("{{extent}}", "4096"))

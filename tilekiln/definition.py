@@ -42,12 +42,16 @@ class Definition:
 
         # See See https://postgis.net/docs/ST_AsMVT.html for SQL source
         # TODO: Add parameters for all ST_AsMVT and ST_AsMVTGeom options
-        j2_template = j2.Template(wrap_sql(self.raw_sql, self.id))
-        return j2_template.render(zoom=zoom, x=x, y=y,
-                                  tile_length=tile_length(zoom),
-                                  tile_area=tile_area(zoom),
-                                  extent=self.extent,
-                                  bbox=bbox(zoom, x, y))
+        sql = j2.Template(wrap_sql(self.raw_sql, self.id))
+        return sql.render(zoom=zoom, x=x, y=y,
+                          tile_length=tile_length(zoom),
+                          tile_area=tile_area(zoom),
+                          coordinate_length=coordinate_length(zoom,
+                                                              self.extent),
+                          coordinate_area=coordinate_area(zoom,
+                                                          self.extent),
+                          extent=self.extent,
+                          bbox=bbox(zoom, x, y))
 
 
 # Utility functions
@@ -73,8 +77,16 @@ def tile_length(zoom):
     return HALF_WORLD/(2**(zoom-1))
 
 
+def coordinate_length(zoom, extent):
+    return tile_length(zoom)/extent
+
+
 def tile_area(zoom):
     return tile_length(zoom)**2
+
+
+def coordinate_area(zoom, extent):
+    return coordinate_length(zoom, extent)**2
 
 
 # ref https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
