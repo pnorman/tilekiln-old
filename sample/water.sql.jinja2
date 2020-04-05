@@ -14,16 +14,6 @@ SELECT
     AND (waterway IN ('dock', 'riverbank')
     OR landuse IN ('reservoir', 'basin')
     OR "natural" IN ('water'))
-{% if zoom <= 0 %}
-    AND way_area > 150000000000
-{% elif zoom <= 1 %}
-    AND way_area > 40000000000
-{% elif zoom <= 2 %}
-    AND way_area > 10000000000
-{% elif zoom <= 3 %}
-    AND way_area > 2500000000
-{% elif zoom <= 4 %}
-    AND way_area > 600000000
-{% elif zoom <= 5 %}
-    AND way_area > 150000000
+{% if zoom <= 12 %}
+    AND way_area > 400 * {{coordinate_area}}
 {% endif %}
