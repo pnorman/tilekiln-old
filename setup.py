@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='tilekiln',
-    version='0.0.1',
+    version='0.0.2',
     author="Paul Norman",
     author_email="osm@paulnorman.ca",
     url="https://github.com/pnorman/tilekiln",
