@@ -22,8 +22,8 @@ def cli():
 @click.option('-c', '--connections', type=click.INT,
               default=multiprocessing.cpu_count())
 @click.option('-s', '--chunk-size', type=click.INT)
-@click.option('-z', '--min-zoom', type=click.INT, default=0)
-@click.option('-Z', '--max-zoom', type=click.INT, default=14)
+@click.option('-z', '--min-zoom', type=click.INT)
+@click.option('-Z', '--max-zoom', type=click.INT)
 def area(config, storage, dbname, host, port, username, connections,
          chunk_size, min_zoom, max_zoom):
     '''Generates tiles for an area'''
@@ -38,6 +38,9 @@ def area(config, storage, dbname, host, port, username, connections,
                                     filesystem)
     dbinfo = {"dbname": dbname, "host": host, "port": port,
               "username": username}
+
+    min_zoom = min_zoom or config.minzoom
+    max_zoom = max_zoom or config.maxzoom
 
     tiles = [(z, x, y) for z in range(min_zoom, max_zoom + 1)
              for x in range(2**z) for y in range(2**z)]
