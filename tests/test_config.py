@@ -82,6 +82,16 @@ class TestConfig(TestCase):
                              Layer("building", {"description": "buildings",
                                                 "fields": {}}, fs))
 
+    def test_zooms(self):
+        with MemoryFS() as fs:
+            fs.writetext("water.sql.jinja2", "select 1")
+            fs.writetext("ne-admin.sql.jinja2", "select 2")
+            fs.writetext("admin.sql.jinja2", "select 3")
+            fs.writetext("country.sql.jinja2", "select 4")
+            config = Config(sample_config, fs)
+            self.assertEqual(config.minzoom, 0)
+            self.assertEqual(config.maxzoom, 14)
+
     def test_tilejson(self):
         with MemoryFS() as fs:
             tj = json.loads(Config('''{"metadata": {"id":"v1"}}''', fs)

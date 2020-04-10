@@ -26,6 +26,14 @@ class Config:
         for id, l in config.get("vector_layers", {}).items():
             self.layers.append(tilekiln.layer.Layer(id, l, fs))
 
+    @property
+    def minzoom(self):
+        return min([layer.minzoom for layer in self.layers])
+
+    @property
+    def maxzoom(self):
+        return max([layer.maxzoom for layer in self.layers])
+
     def tilejson(self, url):
         '''Returns a tilejson as a string for the config
         '''
