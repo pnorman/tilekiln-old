@@ -21,13 +21,13 @@ class TestDefinition(TestCase):
                          Definition("water", "SELECT *", 0, 4, 256))
 
     def test_wrap(self):
-        self.assertEqual(wrap_sql("select", "layerid"),
+        self.assertEqual(wrap_sql("select", "layerid", 4096),
                          ('''WITH mvtgeom AS\n'''
                           '''(\n'''
                           '''select\n'''
                           ''')\n'''
                           '''SELECT ST_AsMVT(mvtgeom.*, 'layerid', '''
-                          '''{{extent}}, 'way', NULL)\n'''
+                          '''4096, 'way', NULL)\n'''
                           '''FROM mvtgeom;'''))
 
     def test_tile_to_projected(self):
@@ -74,40 +74,34 @@ class TestDefinition(TestCase):
         d = Definition("water", "zoom: {{zoom}}, x: {{x}}, y: {{y}}",
                        0, 4, None)
         self.assertEqual(d.render_sql((3, 2, 1)),
-                         wrap_sql("zoom: 3, x: 2, y: 1", "water")
-                         .replace("{{extent}}", "4096"))
+                         wrap_sql("zoom: 3, x: 2, y: 1", "water", 4096))
         d = Definition("water", "bbox: {{bbox}}", 0, 4, None)
         self.assertEqual(d.render_sql((3, 2, 1)),
-                         wrap_sql("bbox: " + bbox(3, 2, 1), "water")
-                         .replace("{{extent}}", "4096"))
+                         wrap_sql("bbox: " + bbox(3, 2, 1), "water", 4096))
 
         d = Definition("water", "length: {{tile_length}}", 0, 4, None)
         self.assertEqual(d.render_sql((1, 0, 0)),
                          wrap_sql("length: " + str(tile_length(1)),
-                                  "water").replace("{{extent}}", "4096"))
+                                  "water", 4096))
 
         d = Definition("water", "area: {{tile_area}}", 0, 4, None)
         self.assertEqual(d.render_sql((1, 0, 0)),
-                         wrap_sql("area: " + str(tile_area(1)), "water")
-                         .replace("{{extent}}", "4096"))
+                         wrap_sql("area: " + str(tile_area(1)), "water", 4096))
 
         d = Definition("water", "extent: {{extent}}", 0, 4, 1024)
         self.assertEqual(d.render_sql((1, 0, 0)),
-                         wrap_sql("extent: 1024", "water")
-                         # Only replace once so if the j2 failed to render it
-                         # doesn't pass
-                         .replace("{{extent}}", "1024", 1))
+                         wrap_sql("extent: 1024", "water", 1024))
 
         d = Definition("water", "coordinate_length: {{coordinate_length}}",
                        0, 4, None)
         self.assertEqual(d.render_sql((1, 0, 0)),
                          wrap_sql("coordinate_length: " +
-                                  str(coordinate_length(1, 4096)), "water")
-                         .replace("{{extent}}", "4096"))
+                                  str(coordinate_length(1, 4096)), "water",
+                                  4096))
 
         d = Definition("water", "coordinate_area: {{coordinate_area}}",
                        0, 4, None)
         self.assertEqual(d.render_sql((1, 0, 0)),
                          wrap_sql("coordinate_area: " +
-                                  str(coordinate_area(1, 4096)), "water")
-                         .replace("{{extent}}", "4096"))
+                                  str(coordinate_area(1, 4096)), "water",
+                                  4096))

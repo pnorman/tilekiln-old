@@ -42,23 +42,26 @@ class Definition:
 
         # See See https://postgis.net/docs/ST_AsMVT.html for SQL source
         # TODO: Add parameters for all ST_AsMVT and ST_AsMVTGeom options
-        sql = j2.Template(wrap_sql(self.raw_sql, self.id))
-        return sql.render(zoom=zoom, x=x, y=y,
-                          tile_length=tile_length(zoom),
-                          tile_area=tile_area(zoom),
-                          coordinate_length=coordinate_length(zoom,
-                                                              self.extent),
-                          coordinate_area=coordinate_area(zoom,
-                                                          self.extent),
-                          extent=self.extent,
-                          bbox=bbox(zoom, x, y))
+        sql = j2.Template(self.raw_sql)
+
+        inner = sql.render(zoom=zoom, x=x, y=y,
+                           tile_length=tile_length(zoom),
+                           tile_area=tile_area(zoom),
+                           coordinate_length=coordinate_length(zoom,
+                                                               self.extent),
+                           coordinate_area=coordinate_area(zoom,
+                                                           self.extent),
+                           extent=self.extent,
+                           bbox=bbox(zoom, x, y))
+
+        return wrap_sql(inner, self.id, self.extent)
 
 
 # Utility functions
-def wrap_sql(sql, layer_id):
+def wrap_sql(sql, layer_id, extent):
     return ('''WITH mvtgeom AS\n(\n''' + sql + '''\n)\n''' +
             '''SELECT ST_AsMVT(mvtgeom.*, '{}', '''.format(layer_id) +
-            '''{{extent}}, 'way', NULL)\n'''
+            '''{}, 'way', NULL)\n'''.format(extent) +
             '''FROM mvtgeom;''')
 
 
