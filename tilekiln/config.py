@@ -75,6 +75,15 @@ class Config:
 
                 tj_layer["fields"] = layer.fields
 
+                if layer.geometry == set(["polygon"]):
+                    tj_layer["geometry"] = "polygon"
+                elif layer.geometry == set(["point"]):
+                    tj_layer["geometry"] = "point"
+                elif layer.geometry == set(["line"]):
+                    tj_layer["geometry"] = "line"
+                else:
+                    tj_layer["geometry"] = "unknown"
+
                 tj["vector_layers"].append(tj_layer)
 
         return json.dumps(tj, sort_keys=True, indent=4)

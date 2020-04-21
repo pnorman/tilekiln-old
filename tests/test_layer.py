@@ -16,12 +16,14 @@ class TestLayer(TestCase):
 
         self.assertEqual(Layer("water",
                                {"fields": {"water": "type of water"},
+                                "geometry": ["polygon"],
                                 "description": "Waterbody and ocean areas",
                                 "sql": [{"minzoom": 0, "maxzoom": 4,
                                          "file": "foo.sql"}]
                                 }, fs1),
                          Layer("water",
                                {"fields": {"water": "type of water"},
+                                "geometry": ["polygon"],
                                 "description": "Waterbody and ocean areas",
                                 "sql": [{"minzoom": 0, "maxzoom": 4,
                                          "file": "foo.sql"}]
@@ -40,6 +42,22 @@ class TestLayer(TestCase):
                                 "sql": [{"minzoom": 0, "maxzoom": 4,
                                          "file": "bar.sql"}]
                                 }, fs2))
+
+        # Order of geometry types doesn't matter
+        self.assertEqual(Layer("water",
+                               {"fields": {"water": "type of water"},
+                                "geometry": ["point", "polygon"],
+                                "description": "Waterbody and ocean areas",
+                                "sql": [{"minzoom": 0, "maxzoom": 4,
+                                         "file": "foo.sql"}]
+                                }, fs1),
+                         Layer("water",
+                               {"fields": {"water": "type of water"},
+                                "geometry": ["polygon", "point"],
+                                "description": "Waterbody and ocean areas",
+                                "sql": [{"minzoom": 0, "maxzoom": 4,
+                                         "file": "foo.sql"}]
+                                }, fs1))
 
         # id
         self.assertFalse(Layer("land",
@@ -77,6 +95,37 @@ class TestLayer(TestCase):
                          Layer("water",
                                {"fields": {"water": "type of water"},
                                 "description": "Waterbody and ocean areas",
+                                "sql": [{"minzoom": 0, "maxzoom": 4,
+                                         "file": "foo.sql"}]
+                                }, fs1))
+
+        # geometry
+        self.assertFalse(Layer("water",
+                               {"fields": {"water": "type of water"},
+                                "description": "Waterbody and ocean areas",
+                                "geometry": ["polygon"],
+                                "sql": [{"minzoom": 0, "maxzoom": 4,
+                                         "file": "foo.sql"}]
+                                }, fs1) ==
+                         Layer("water",
+                               {"fields": {"water": "type of water"},
+                                "description": "Waterbody and ocean areas",
+                                "geometry": ["point"],
+                                "sql": [{"minzoom": 0, "maxzoom": 4,
+                                         "file": "foo.sql"}]
+                                }, fs1))
+
+        self.assertFalse(Layer("water",
+                               {"fields": {"water": "type of water"},
+                                "description": "Waterbody and ocean areas",
+                                "geometry": ["polygon", "point"],
+                                "sql": [{"minzoom": 0, "maxzoom": 4,
+                                         "file": "foo.sql"}]
+                                }, fs1) ==
+                         Layer("water",
+                               {"fields": {"water": "type of water"},
+                                "description": "Waterbody and ocean areas",
+                                "geometry": ["point"],
                                 "sql": [{"minzoom": 0, "maxzoom": 4,
                                          "file": "foo.sql"}]
                                 }, fs1))
@@ -120,6 +169,25 @@ class TestLayer(TestCase):
                                 "sql": [{"minzoom": 0, "maxzoom": 4,
                                          "file": "foo.sql"}]
                                 }, fs2))
+
+    def test_geometry(self):
+        fs = MemoryFS()
+        fs.writetext('1.sql', 'select 1')
+        layer = Layer("water",
+                      {"geometry": ["polygon"],
+                       "description": "Waterbody and ocean areas",
+                       "sql": [{"minzoom": 0, "maxzoom": 4, "file": "1.sql"}]
+                       }, fs)
+
+        self.assertEqual(layer.geometry, set(["polygon"]))
+
+        layer = Layer("water",
+                      {"geometry": ["polygon", "point"],
+                       "description": "Waterbody and ocean areas",
+                       "sql": [{"minzoom": 0, "maxzoom": 4, "file": "1.sql"}]
+                       }, fs)
+
+        self.assertEqual(layer.geometry, set(["polygon", "point"]))
 
     def test_definition_for_zoom(self):
         fs = MemoryFS()
