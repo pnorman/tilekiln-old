@@ -14,7 +14,7 @@ class Layer:
 
         self.definitions = []
 
-        self.geometry = set(layer_config.get("geometry", []))
+        self.geometry_type = set(layer_config.get("geometry_type", []))
 
         if "sql" in layer_config:
             for d in layer_config["sql"]:
@@ -30,7 +30,7 @@ class Layer:
         return (self.id == other.id and self.description == other.description
                 and self.fields == other.fields
                 and self.definitions == other.definitions
-                and self.geometry == other.geometry)
+                and self.geometry_type == other.geometry_type)
 
     def definition_for_zoom(self, zoom):
         ''' Get the right definition for a given zoom

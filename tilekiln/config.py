@@ -75,14 +75,14 @@ class Config:
 
                 tj_layer["fields"] = layer.fields
 
-                if layer.geometry == set(["polygon"]):
-                    tj_layer["geometry"] = "polygon"
-                elif layer.geometry == set(["point"]):
-                    tj_layer["geometry"] = "point"
-                elif layer.geometry == set(["line"]):
-                    tj_layer["geometry"] = "line"
+                if layer.geometry_type == set(["polygon"]):
+                    tj_layer["geometry_type"] = "polygon"
+                elif layer.geometry_type == set(["point"]):
+                    tj_layer["geometry_type"] = "point"
+                elif layer.geometry_type == set(["line"]):
+                    tj_layer["geometry_type"] = "line"
                 else:
-                    tj_layer["geometry"] = "unknown"
+                    tj_layer["geometry_type"] = "unknown"
 
                 tj["vector_layers"].append(tj_layer)
 

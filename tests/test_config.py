@@ -27,7 +27,7 @@ vector_layers:
     fields:
       admin_level: Level of admin boundary
     description: Administrative boundaries
-    geometry:
+    geometry_type:
     - polygon
     sql:
     - minzoom: 1 # Must not overlap with other templates
@@ -41,7 +41,7 @@ vector_layers:
       name: Name of country
       area: Area of country
     description: Points for country names
-    geometry:
+    geometry_type:
     - point
     - polygon
     sql:
@@ -147,7 +147,7 @@ class TestConfig(TestCase):
             self.assertEqual(water["description"], "Waterbody and ocean areas")
             self.assertEqual(water["minzoom"], 0)
             self.assertEqual(water["maxzoom"], 8)
-            self.assertEqual(water["geometry"], "unknown")
+            self.assertEqual(water["geometry_type"], "unknown")
             self.assertEqual(water["fields"],
                              {"water": "Type of water"})
 
@@ -155,7 +155,7 @@ class TestConfig(TestCase):
             self.assertEqual(admin["description"], "Administrative boundaries")
             self.assertEqual(admin["minzoom"], 1)
             self.assertEqual(admin["maxzoom"], 10)
-            self.assertEqual(admin["geometry"], "polygon")
+            self.assertEqual(admin["geometry_type"], "polygon")
             self.assertEqual(admin["fields"],
                              {"admin_level": "Level of admin boundary"})
 
@@ -164,7 +164,7 @@ class TestConfig(TestCase):
                              "Points for country names")
             self.assertEqual(country_names["minzoom"], 3)
             self.assertEqual(country_names["maxzoom"], 14)
-            self.assertEqual(country_names["geometry"], "unknown")
+            self.assertEqual(country_names["geometry_type"], "unknown")
             self.assertEqual(country_names["fields"],
                              {"area": "Area of country",
                               "name": "Name of country"})
