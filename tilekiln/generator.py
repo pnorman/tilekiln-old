@@ -34,5 +34,5 @@ class Generator:
             y = tile[2]
             output_dir = "{id}/{z}/{x}/".format(id=self.id, z=zoom, x=x)
             filesystem.makedirs(output_dir, recreate=True)
-            output_path = output_dir + "{y}.pbf".format(y=y)
+            output_path = output_dir + "{y}.mvt".format(y=y)
             filesystem.writebytes(output_path, tiledata)

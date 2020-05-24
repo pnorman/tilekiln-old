@@ -52,4 +52,4 @@ class TestGenerator(TestCase):
 
         gen.write_tiles([(0, 0, 0)])
 
-        self.assertEqual(out_fs.openbin("v1/0/0/0.pbf").read(), b"result")
+        self.assertEqual(out_fs.openbin("v1/0/0/0.mvt").read(), b"result")
