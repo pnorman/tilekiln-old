@@ -135,13 +135,13 @@ class TestConfig(TestCase):
             country_names = {}
 
             self.assertEqual(len(tj["vector_layers"]), 3)
-            for l in tj["vector_layers"]:
+            for layer in tj["vector_layers"]:
                 if l["id"] == "water":
-                    water = l
+                    water = layer
                 elif l["id"] == "admin":
-                    admin = l
+                    admin = layer
                 elif l["id"] == "country_names":
-                    country_names = l
+                    country_names = layer
 
             self.assertEqual(water["id"], "water")
             self.assertEqual(water["description"], "Waterbody and ocean areas")
