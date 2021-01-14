@@ -6,19 +6,21 @@ from tilekiln.definition import coordinate_length, coordinate_area
 
 class TestDefinition(TestCase):
     def test_equals(self):
-        self.assertEqual(Definition("water", "SELECT *", 0, 4, None),
-                         Definition("water", "SELECT *", 0, 4, None))
+        self.assertEqual(Definition("water", "SELECT *", 0, 4, None, None),
+                         Definition("water", "SELECT *", 0, 4, None, None))
 
-        self.assertFalse(Definition("water", "SELECT *", 0, 4, None) ==
-                         Definition("water", "SELECT *", 0, 2, None))
-        self.assertFalse(Definition("water", "SELECT *", 1, 4, None) ==
-                         Definition("water", "SELECT *", 0, 4, None))
-        self.assertFalse(Definition("water", "SELECT *", 0, 4, None) ==
-                         Definition("water", "SELECT 1", 0, 4, None))
-        self.assertFalse(Definition("water", "SELECT *", 0, 4, None) ==
-                         Definition("land", "SELECT *", 0, 4, None))
-        self.assertFalse(Definition("water", "SELECT *", 0, 4, 1024) ==
-                         Definition("water", "SELECT *", 0, 4, 256))
+        self.assertFalse(Definition("water", "SELECT *", 0, 4, None, None) ==
+                         Definition("water", "SELECT *", 0, 2, None, None))
+        self.assertFalse(Definition("water", "SELECT *", 1, 4, None, None) ==
+                         Definition("water", "SELECT *", 0, 4, None, None))
+        self.assertFalse(Definition("water", "SELECT *", 0, 4, None, None) ==
+                         Definition("water", "SELECT 1", 0, 4, None, None))
+        self.assertFalse(Definition("water", "SELECT *", 0, 4, None, None) ==
+                         Definition("land", "SELECT *", 0, 4, None, None))
+        self.assertFalse(Definition("water", "SELECT *", 0, 4, 1024, None) ==
+                         Definition("water", "SELECT *", 0, 4, 256, None))
+        self.assertFalse(Definition("water", "SELECT *", 0, 4, None, 16) ==
+                         Definition("water", "SELECT *", 0, 4, None, 8))
 
     def test_wrap(self):
         self.assertEqual(wrap_sql("select", "layerid", 4096),
@@ -63,44 +65,57 @@ class TestDefinition(TestCase):
         self.assertEqual(coordinate_area(1, 1024), 382901897.8839584)
 
     def test_bbox(self):
-        self.assertEqual(bbox(0, 0, 0),
+        self.assertEqual(bbox(0, 0, 0, 0),
                          "ST_MakeEnvelope(-20037508.34, -20037508.34, "
                          "20037508.34, 20037508.34, 3857)")
-        self.assertEqual(bbox(1, 0, 0),
+        self.assertEqual(bbox(1, 0, 0, 0),
                          "ST_MakeEnvelope(-20037508.34, 0.0, "
                          "0.0, 20037508.34, 3857)")
+        self.assertEqual(bbox(1, 0, 0, 1),
+                         "ST_MakeEnvelope(-40075016.68, -20037508.34, "
+                         "20037508.34, 40075016.68, 3857)")
 
     def test_rendering(self):
         d = Definition("water", "zoom: {{zoom}}, x: {{x}}, y: {{y}}",
-                       0, 4, None)
+                       0, 4, None, None)
         self.assertEqual(d.render_sql((3, 2, 1)),
                          wrap_sql("zoom: 3, x: 2, y: 1", "water", 4096))
-        d = Definition("water", "bbox: {{bbox}}", 0, 4, None)
+        d = Definition("water", "bbox: {{bbox}}", 0, 4, 4096, 2048)
         self.assertEqual(d.render_sql((3, 2, 1)),
-                         wrap_sql("bbox: " + bbox(3, 2, 1), "water", 4096))
+                         wrap_sql("bbox: " + bbox(3, 2, 1, .5), "water", 4096))
 
-        d = Definition("water", "length: {{tile_length}}", 0, 4, None)
+        d = Definition("water", "length: {{tile_length}}", 0, 4, None, None)
         self.assertEqual(d.render_sql((1, 0, 0)),
                          wrap_sql("length: " + str(tile_length(1)),
                                   "water", 4096))
 
-        d = Definition("water", "area: {{tile_area}}", 0, 4, None)
+        d = Definition("water", "area: {{tile_area}}", 0, 4, None, None)
         self.assertEqual(d.render_sql((1, 0, 0)),
                          wrap_sql("area: " + str(tile_area(1)), "water", 4096))
 
-        d = Definition("water", "extent: {{extent}}", 0, 4, 1024)
+        d = Definition("water", "extent: {{extent}}", 0, 4, 1024, None)
         self.assertEqual(d.render_sql((1, 0, 0)),
                          wrap_sql("extent: 1024", "water", 1024))
 
+        d = Definition("water", "buffer: {{buffer}}", 0, 4, None, 7)
+        self.assertEqual(d.render_sql((1, 0, 0)),
+                         wrap_sql("buffer: 7", "water", 4096))
+
+        d = Definition("water", "unbuffered_bbox: {{unbuffered_bbox}}", 0, 4,
+                       4096, 2048)
+        self.assertEqual(d.render_sql((3, 2, 1)),
+                         wrap_sql("unbuffered_bbox: " + bbox(3, 2, 1, 0),
+                                  "water", 4096))
+
         d = Definition("water", "coordinate_length: {{coordinate_length}}",
-                       0, 4, None)
+                       0, 4, None, None)
         self.assertEqual(d.render_sql((1, 0, 0)),
                          wrap_sql("coordinate_length: " +
                                   str(coordinate_length(1, 4096)), "water",
                                   4096))
 
         d = Definition("water", "coordinate_area: {{coordinate_area}}",
-                       0, 4, None)
+                       0, 4, None, None)
         self.assertEqual(d.render_sql((1, 0, 0)),
                          wrap_sql("coordinate_area: " +
                                   str(coordinate_area(1, 4096)), "water",
