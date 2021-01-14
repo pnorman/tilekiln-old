@@ -202,11 +202,11 @@ class TestLayer(TestCase):
 
         for i in range(0, 5):
             self.assertEqual(layer.definition_for_zoom(i),
-                             Definition("water", "select 1", 0, 4, None))
+                             Definition("water", "select 1", 0, 4, None, None))
 
         for i in range(5, 9):
             self.assertEqual(layer.definition_for_zoom(i),
-                             Definition("water", "select 2", 5, 8, None))
+                             Definition("water", "select 2", 5, 8, None, None))
 
         self.assertIsNone(layer.definition_for_zoom(9), None)
 

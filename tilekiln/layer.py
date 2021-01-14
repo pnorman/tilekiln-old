@@ -21,7 +21,7 @@ class Layer:
                 self.definitions.append(Definition(self.id,
                                         fs.readtext(d["file"]),
                                         d["minzoom"], d["maxzoom"],
-                                        d.get("extent")))
+                                        d.get("extent"), d.get("buffer")))
 
             self.minzoom = min([d.minzoom for d in self.definitions])
             self.maxzoom = max([d.maxzoom for d in self.definitions])

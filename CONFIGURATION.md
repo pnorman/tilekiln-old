@@ -12,7 +12,7 @@ The configuration SHALL be a [YAML](https://yaml.org/spec/1.2/spec.html) documen
 
 ## SQL Files
 
-SQL Jinja files are processed with Jinja2 as documented below. They SHOULD form a valid PostgreSQL SELECT statement with one column which is a PostGIS geometry in the coordinates space of the vector tile. This SHOULD be done with `ST_AsMVTGeom(geom, {{bbox}})`.
+SQL Jinja files are processed with Jinja2 as documented below. They SHOULD form a valid PostgreSQL SELECT statement with one column which is a PostGIS geometry in the coordinates space of the vector tile. This SHOULD be done with `ST_AsMVTGeom(geom, {{bbox}}, {{extent}}))`.
 
 ### Jinja substitutions
 
@@ -32,9 +32,17 @@ The y coordinate of the tile being generated.
 
 A SQL statement that evaluates to the buffered bounding box of the tile being generated.
 
+#### `{{ unbuffered_bbox }}``
+
+A SQL statement that evaluates to the unbuffered bounding box of the tile being generated.
+
 #### `{{ extent }}`
 
 The tile [extent](https://github.com/mapbox/vector-tile-spec/tree/master/2.1#3-projection-and-bounds) in screen space.
+
+### `{{ buffer }}`
+
+The tile buffer, in units of tile coordinate space.
 
 #### `{{ tile_length }}`
 

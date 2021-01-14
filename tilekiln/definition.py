@@ -10,19 +10,21 @@ class Definition:
 
     This class does the work of producing the SQL query for a particular tile.
     '''
-    def __init__(self, id, raw_sql, minzoom, maxzoom, extent):
+    def __init__(self, id, raw_sql, minzoom, maxzoom, extent, buffer):
         self.id = id
         self.raw_sql = raw_sql
         self.minzoom = minzoom
         self.maxzoom = maxzoom
 
         self.extent = extent or 4096
+        self.buffer = buffer or 0
 
     def __eq__(self, other):
         return (self.id == other.id and self.raw_sql == other.raw_sql and
                 self.minzoom == other.minzoom and
                 self.maxzoom == other.maxzoom and
-                self.extent == other.extent)
+                self.extent == other.extent and
+                self.buffer == other.buffer)
 
     def __repr__(self):
         return ('Definition({}, "{}", {}, {}, {})'
@@ -51,8 +53,9 @@ class Definition:
                                                                self.extent),
                            coordinate_area=coordinate_area(zoom,
                                                            self.extent),
-                           extent=self.extent,
-                           bbox=bbox(zoom, x, y))
+                           extent=self.extent, buffer=self.buffer,
+                           bbox=bbox(zoom, x, y, self.buffer/self.extent),
+                           unbuffered_bbox=bbox(zoom, x, y, 0))
 
         return wrap_sql(inner, self.id, self.extent)
 
@@ -65,12 +68,12 @@ def wrap_sql(sql, layer_id, extent):
             '''FROM mvtgeom;''')
 
 
-def bbox(zoom, x, y):
+def bbox(zoom, x, y, buffer):
     ''' Returns an array of [minx, miny, max, maxy]
         There is a flip of y axis converting between xyz and EPSG:3857
     '''
-    ll = zxy_to_projected(zoom, x, y)
-    ur = zxy_to_projected(zoom, x+1, y+1)
+    ll = zxy_to_projected(zoom, x-buffer, y-buffer)
+    ur = zxy_to_projected(zoom, x+1+buffer, y+1+buffer)
     return ('ST_MakeEnvelope({}, {}, {}, {}, 3857)'
             .format(ll[0], ur[1], ur[0], ll[1]))
 

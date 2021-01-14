@@ -12,6 +12,6 @@ class TestDatabase(TestCase):
             fetchone.return_value = (b"result",)
 
         db = Database(mock_connect)
-        dfn = Definition("a", "sql", 0, 4, None)
+        dfn = Definition("a", "sql", 0, 4, None, None)
         tilelayer = db.generate_tilelayer(dfn, (0, 0, 0))
         self.assertEqual(tilelayer, b"result")
