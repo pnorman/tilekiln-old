@@ -48,13 +48,33 @@ def area(config, storage, dbname, host, port, username, connections,
 
     bounding_box = tuple(map(float, bbox.split(',')))
     if len(bounding_box) != 4:
-        raise ValueError(f'Provided bounding box: "{bbox}" is invalid. It should have 4 elements separated by commas.')
-    if bounding_box[0] < -180 or bounding_box[0] > 180 or bounding_box[2] < -180 or bounding_box[2] > 180:
-        raise ValueError('Longitude cannot be lower than -180 or higher than 180.')
-    if bounding_box[1] < -90 or bounding_box[1] > 90 or bounding_box[3] < -90 or bounding_box[3] > 90:
-        raise ValueError('Latitude cannot be lower than -90 or higher than 90.')
+        raise ValueError(
+            f'Provided bounding box: "{bbox}" is invalid.' +
+            ' It should have 4 elements separated by commas.'
+        )
+    if any([
+        bounding_box[0] < -180,
+        bounding_box[0] > 180,
+        bounding_box[2] < -180,
+        bounding_box[2] > 180,
+    ]):
+        raise ValueError(
+            'Longitude cannot be lower than -180 or higher than 180.'
+        )
+    if any([
+        bounding_box[1] < -90,
+        bounding_box[1] > 90,
+        bounding_box[3] < -90,
+        bounding_box[3] > 90
+    ]):
+        raise ValueError(
+            'Latitude cannot be lower than -90 or higher than 90.'
+        )
 
-    tiles = [(tile.z, tile.x, tile.y) for tile in mercantile.tiles(*bounding_box, zoom_levels)]
+    tiles = [
+        (tile.z, tile.x, tile.y)
+        for tile in mercantile.tiles(*bounding_box, zoom_levels)
+    ]
 
     # Apply some heuristics to guess a chunk size
     if chunk_size is None:
