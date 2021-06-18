@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='tilekiln',
-    version='0.0.5',
+    version='0.0.6',
     author="Paul Norman",
     author_email="osm@paulnorman.ca",
     url="https://github.com/pnorman/tilekiln",
@@ -15,7 +15,8 @@ setup(
         'fs',
         'pyyaml',
         'jinja2',
-        'psycopg2'
+        'psycopg2',
+        'mercantile',
     ],
     entry_points={
         'console_scripts': ['tilekiln-generate=tilekiln.scripts.generate:cli',

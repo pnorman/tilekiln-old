@@ -1,5 +1,7 @@
 import click
 import fs.osfs
+import mercantile
+
 import tilekiln.config
 import tilekiln.kiln
 import os
@@ -24,8 +26,9 @@ def cli():
 @click.option('-s', '--chunk-size', type=click.INT)
 @click.option('-z', '--min-zoom', type=click.INT)
 @click.option('-Z', '--max-zoom', type=click.INT)
+@click.option('--bbox', 'bbox', default='-180,-90,180,90')
 def area(config, storage, dbname, host, port, username, connections,
-         chunk_size, min_zoom, max_zoom):
+         chunk_size, min_zoom, max_zoom, bbox):
     '''Generates tiles for an area'''
     # Get the directory the config is in
     full_path = os.path.join(os.getcwd(), config)
@@ -41,9 +44,37 @@ def area(config, storage, dbname, host, port, username, connections,
 
     min_zoom = min_zoom or config.minzoom
     max_zoom = max_zoom or config.maxzoom
+    zoom_levels = [z for z in range(min_zoom, max_zoom + 1)]
 
-    tiles = [(z, x, y) for z in range(min_zoom, max_zoom + 1)
-             for x in range(2**z) for y in range(2**z)]
+    bounding_box = tuple(map(float, bbox.split(',')))
+    if len(bounding_box) != 4:
+        raise ValueError(
+            f'Provided bounding box: "{bbox}" is invalid.' +
+            ' It should have 4 elements separated by commas.'
+        )
+    if any([
+        bounding_box[0] < -180,
+        bounding_box[0] > 180,
+        bounding_box[2] < -180,
+        bounding_box[2] > 180,
+    ]):
+        raise ValueError(
+            'Longitude cannot be lower than -180 or higher than 180.'
+        )
+    if any([
+        bounding_box[1] < -90,
+        bounding_box[1] > 90,
+        bounding_box[3] < -90,
+        bounding_box[3] > 90
+    ]):
+        raise ValueError(
+            'Latitude cannot be lower than -90 or higher than 90.'
+        )
+
+    tiles = [
+        (tile.z, tile.x, tile.y)
+        for tile in mercantile.tiles(*bounding_box, zoom_levels)
+    ]
 
     # Apply some heuristics to guess a chunk size
     if chunk_size is None:

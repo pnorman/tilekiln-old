@@ -44,6 +44,7 @@ This reads a config file and generates vector tiles, saving them to the object s
 Usage: tilekiln-generate area [OPTIONS] CONFIG STORAGE
 
   Generates tiles for an area
+  You can provide bounding box using --bbox parameter e.g.: 14,49,24.03,54.86
 
 Options:
   -d, --dbname TEXT
@@ -54,6 +55,7 @@ Options:
   -s, --chunk-size INTEGER
   -z, --min-zoom INTEGER
   -Z, --max-zoom INTEGER
+  --bbox TEXT
   --help                     Show this message and exit.
 ```
 
