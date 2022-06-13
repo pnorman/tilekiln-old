@@ -28,11 +28,11 @@ The x coordinate of the tile being generated.
 
 The y coordinate of the tile being generated.
 
-#### `{{ bbox }}``
+#### `{{ bbox }}`
 
 A SQL statement that evaluates to the buffered bounding box of the tile being generated.
 
-#### `{{ unbuffered_bbox }}``
+#### `{{ unbuffered_bbox }}`
 
 A SQL statement that evaluates to the unbuffered bounding box of the tile being generated.
 
@@ -40,7 +40,7 @@ A SQL statement that evaluates to the unbuffered bounding box of the tile being 
 
 The tile [extent](https://github.com/mapbox/vector-tile-spec/tree/master/2.1#3-projection-and-bounds) in screen space.
 
-### `{{ buffer }}`
+#### `{{ buffer }}`
 
 The tile buffer, in units of tile coordinate space.
 
