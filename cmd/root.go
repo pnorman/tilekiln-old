@@ -46,5 +46,7 @@ func Execute() {
 }
 
 func init() {
-
+	rootCmd.PersistentFlags().StringP("config", "c", "", "Configuration file")
+	rootCmd.MarkPersistentFlagRequired("config")
+	rootCmd.MarkPersistentFlagFilename("config")
 }
