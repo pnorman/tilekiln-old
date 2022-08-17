@@ -2,69 +2,60 @@
 
 ## Background
 
-Tilekiln is a set of command-line utilities to generate and serve Mapbox Vector Tiles (MVTs). It generates asynchronously with tilekiln-generate and serves them with tilekiln-serve.
+Tilekiln is a set of command-line utilities to generate and serve Mapbox Vector Tiles (MVTs).
 
 Generation relies on the standard method of a PostgreSQL + PostGIS server as a data source, and ST_AsMVT to serialize the MVTs.
 
 The target use-case is vector tiles for OpenStreetMap Carto on openstreetmap.org, a worldwide complex basemap under high load.
 
-## Install
-
-For local development
-
-```sh
-python3 -m venv venv
-. venv/bin/activate
-pip install --editable .
-```
+Minutely updates are supported with an appropriately updating database.
 
 ## Requirements
 
-Tilekiln requires a PostGIS database with data loaded to generate vector tiles, saving them to a filesystem or object store [supported by PyFilesystem](https://www.pyfilesystem.org/page/index-of-filesystems/).
+Tilekiln requires a PostGIS database with data loaded to generate vector tiles.
 
-[OpenStreetMap Carto's](https://github.com/gravitystorm/openstreetmap-carto/blob/master/INSTALL.md#openstreetmap-data) directions are a good starting place for loading OpenStreetMap data into a PostGIS database.
+[OpenStreetMap Carto's](https://github.com/gravitystorm/openstreetmap-carto/blob/master/INSTALL.md#openstreetmap-data) directions are a good starting place for loading OpenStreetMap data into a PostGIS database, but any PostGIS data source in EPSG 3857 will work.
 
 - PostgreSQL 9.5+
 - PostGIS 2.4+, 3.0 is strongly recommended
-- Python 3.6+
 
-## Usage
+## History
 
-### tilekiln-tilejson
+The tilekiln configuration syntax is based on studies and experience with other vector tile and map generation configurations. In particular, it is heavily inspired by Tilezen's use of Jinja2 templates and TileJSON for necessary metadata.
 
-This reads a config file and produces a tilejson file, frequently used in software consuming vector tiles.
-
-### tilekiln-generate
-
-This reads a config file and generates vector tiles, saving them to the object store
-
-#### tilekiln-generate area
-
-```
-Usage: tilekiln-generate area [OPTIONS] CONFIG STORAGE
-
-  Generates tiles for an area
-  You can provide bounding box using --bbox parameter e.g.: 14,49,24.03,54.86
-
-Options:
-  -d, --dbname TEXT
-  -h, --host TEXT
-  -p, --port TEXT
-  -U, --username TEXT
-  -c, --connections INTEGER
-  -s, --chunk-size INTEGER
-  -z, --min-zoom INTEGER
-  -Z, --max-zoom INTEGER
-  --bbox TEXT
-  --help                     Show this message and exit.
-```
-
-## Contributing
-
-Test code with ``python setup.py test``.
-
-All code should be formatted according to flake8. Check this with `flake8 tilekiln tests`
+Tilekiln v0.0.x was written in Python and established the configuration format met all the requirements, but the implementation failed to scale on sufficiently powerful machines and the storage mechanisms had issues.
 
 ## License
 
-This repository is licensed under the ISC license contained in [LICENSE](LICENSE)
+### Code
+
+Copyright © 2022 Paul Norman <osm@paulnorman.ca>
+
+The code is licensed terms of the GNU General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+### Documentation
+
+The text of the documentation and configuration format specification is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/). However, the use of the specification in products and code is entirely free: there are no royalties, restrictions, or requirements.
+
+### Sample configuration
+
+The sample configuration files are released under the CC0 Public
+Domain Dedication, version 1.0, as published by Creative Commons.
+To the extent possible under law, the author(s) have dedicated all
+copyright and related and neighboring rights to the Software to
+the public domain worldwide. The Software is distributed WITHOUT
+ANY WARRANTY.
+
+If you did not receive a copy of the CC0 Public Domain Dedication
+along with the Software, see
+<http://creativecommons.org/publicdomain/zero/1.0/>
