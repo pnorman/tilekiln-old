@@ -17,8 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/pnorman/tilekiln/pkg/config"
 	"github.com/spf13/cobra"
 )
 
@@ -31,21 +30,14 @@ query needed to generate a tile.
 
 This enables manually running the query to debug, particularly with EXPLAIN.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("query called")
+		config.LoadConfig(configFile)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(queryCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	queryCmd.PersistentFlags().StringP("tile", "t", "", "z/x/y of tile to generate")
-	queryCmd.MarkPersistentFlagRequired("tile")
-	queryCmd.PersistentFlags().StringP("layer", "l", "", "Tile layer generator to generate SQL for. If missing, all layers are generated.")
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// queryCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	queryCmd.Flags().StringP("tile", "t", "", "z/x/y of tile to generate")
+	queryCmd.MarkFlagRequired("tile")
+	queryCmd.Flags().StringP("layer", "l", "", "Tile layer generator to generate SQL for. If missing, all layers are generated.")
 }

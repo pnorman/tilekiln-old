@@ -23,18 +23,21 @@ import (
 )
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "tilekiln",
-	Short: "Tilekiln is a command-line utilities to generate and serve MVTs",
-	Long: `Tilekiln is a command-line utilities to generate and serve
-Mapbox Vector Tiles (MVTs).
+var (
+	configFile string
+	rootCmd    = &cobra.Command{
+		Use:   "tilekiln",
+		Short: "Tilekiln is a command-line utilities to generate and serve MVTs",
+		Long: `Tilekiln is a command-line utilities to generate and serve
+    Mapbox Vector Tiles (MVTs).
 
-Generation relies on the standard method of a PostgreSQL + PostGIS server as a
-data source, and ST_AsMVT to serialize the MVTs.
+    Generation relies on the standard method of a PostgreSQL + PostGIS server as a
+    data source, and ST_AsMVT to serialize the MVTs.
 
-The target use-case is vector tiles for OpenStreetMap Carto on
-openstreetmap.org, a worldwide complex basemap under high load.`,
-}
+    The target use-case is vector tiles for OpenStreetMap Carto on
+    openstreetmap.org, a worldwide complex basemap under high load.`,
+	}
+)
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
@@ -46,7 +49,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringP("config", "c", "", "Configuration file")
+	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "", "Configuration file")
 	rootCmd.MarkPersistentFlagRequired("config")
 	rootCmd.MarkPersistentFlagFilename("config")
 }
