@@ -26,13 +26,13 @@ import (
 )
 
 type Metadata struct {
-	Id          string    `yaml:"id"`
-	Bounds      []float32 `yaml:"bounds"`
-	Name        string    `yaml:"name"`
-	Description string    `yaml:"description"`
-	Version     string    `yaml:"version"`
-	Attribution string    `yaml:"attribution"`
-	Center      []float32 `yaml:"center"`
+	Id          string     `yaml:"id"`
+	Bounds      [4]float64 `yaml:"bounds"`
+	Name        string     `yaml:"name"`
+	Description string     `yaml:"description"`
+	Version     string     `yaml:"version"`
+	Attribution string     `yaml:"attribution"`
+	Center      [2]float64 `yaml:"center"`
 }
 
 type VectorLayer struct {
@@ -44,7 +44,7 @@ type Config struct {
 	VectorLayers VectorLayer `yaml:"vector_layer"`
 }
 
-func LoadConfig(file string) {
+func LoadConfig(file string) Config {
 	f, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal(err)
@@ -56,5 +56,8 @@ func LoadConfig(file string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	fmt.Println("Read config file " + file)
+
+	return config
 }
