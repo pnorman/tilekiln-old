@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/pnorman/tilekiln/pkg/config"
 	"github.com/pnorman/tilekiln/pkg/tilejson"
@@ -30,7 +31,11 @@ var tilejsonCmd = &cobra.Command{
 	Short: "Produce a tilejson from a configuration",
 	Long:  `Produce a tilejson from a configuration`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(tilejson.GenerateTileJSON(config.LoadConfig(configFile)))
+		result, err := tilejson.GenerateTileJSON(config.LoadConfig(configFile), "http://127.0.0.1:8080/")
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(string(result))
 	},
 }
 

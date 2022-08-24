@@ -40,7 +40,7 @@ type VectorLayer struct {
 }
 
 type Config struct {
-	Metadata     Metadata    `yaml:"Metadata"`
+	Metadata     Metadata    `yaml:"metadata"`
 	VectorLayers VectorLayer `yaml:"vector_layer"`
 }
 
@@ -52,7 +52,7 @@ func LoadConfig(file string) Config {
 
 	var config Config
 
-	err = yaml.Unmarshal(f, config)
+	err = yaml.Unmarshal(f, &config)
 	if err != nil {
 		log.Fatal(err)
 	}
