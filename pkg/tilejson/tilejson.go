@@ -36,7 +36,11 @@ var worldBounds = [4]float64{-180, -85.05112877980659, 180, 85.0511287798066}
 of TileJSON fields */
 
 type VectorLayer struct {
-	Id string `json:"id"`
+	Id          string `json:"id"`
+	Description string `json:"description,omitempty"`
+	Minzoom     uint8  `json:"minzoom,omitempty"`
+	Maxzoom     uint8  `json:"maxzoom,omitempty"`
+	/* TODO: fields */
 }
 
 type TileJSON struct {
@@ -56,13 +60,41 @@ type TileJSON struct {
 
 // GenerateTilejson takes a config and generates a Tilejson
 func GenerateTileJSON(config config.Config, host string) ([]byte, error) {
+
+	var maxzoom, minzoom uint8
+	var layers []VectorLayer
+	for name, configLayer := range config.VectorLayers {
+		var layer VectorLayer
+		layer.Id = name
+		layer.Description = configLayer.Description
+		var layerMaxzoom, layerMinzoom uint8
+		for _, sqlDefinition := range configLayer.Sql {
+			if sqlDefinition.Maxzoom > layerMaxzoom {
+				layerMaxzoom = sqlDefinition.Maxzoom
+			}
+			if sqlDefinition.Minzoom > layerMinzoom {
+				layerMinzoom = sqlDefinition.Minzoom
+			}
+		}
+		layer.Maxzoom = layerMaxzoom
+		layer.Minzoom = layerMinzoom
+		layers = append(layers, layer)
+		if layerMaxzoom > maxzoom {
+			maxzoom = layerMaxzoom
+		}
+		if layerMinzoom > minzoom {
+			minzoom = layerMinzoom
+		}
+	}
 	result := TileJSON{
 		TileJSON:     Version,
 		Tiles:        []string{fmt.Sprintf("%s{z}/{x}/{y}.mvt", host)},
-		VectorLayers: make([]VectorLayer, 0),
+		VectorLayers: layers,
 		Attribution:  config.Metadata.Attribution,
 		Bounds:       worldBounds,
 		Description:  config.Metadata.Description,
+		Maxzoom:      maxzoom,
+		Minzoom:      minzoom,
 		Name:         config.Metadata.Name,
 		Scheme:       SchemeXYZ,
 		Version:      config.Metadata.Version,

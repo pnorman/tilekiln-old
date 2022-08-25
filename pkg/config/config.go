@@ -35,13 +35,22 @@ type Metadata struct {
 	Center      [3]float64 `yaml:"center"`
 }
 
+type SqlDefinition struct {
+	Minzoom uint8
+	Maxzoom uint8
+	Extent  uint32
+	File    string
+}
+
 type VectorLayer struct {
-	Description string `yaml:"description"`
+	Description string            `yaml:"description"`
+	Fields      map[string]string `yaml:"fields"`
+	Sql         []SqlDefinition   `yaml:"sql"`
 }
 
 type Config struct {
-	Metadata     Metadata      `yaml:"metadata"`
-	VectorLayers []VectorLayer `yaml:"vector_layer"`
+	Metadata     Metadata               `yaml:"metadata"`
+	VectorLayers map[string]VectorLayer `yaml:"vector_layers"`
 }
 
 func LoadConfig(file string) Config {
@@ -58,6 +67,5 @@ func LoadConfig(file string) Config {
 	}
 
 	fmt.Println("Read config file " + file)
-
 	return config
 }
