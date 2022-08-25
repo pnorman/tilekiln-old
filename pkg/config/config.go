@@ -32,7 +32,7 @@ type Metadata struct {
 	Description string     `yaml:"description"`
 	Version     string     `yaml:"version"`
 	Attribution string     `yaml:"attribution"`
-	Center      [2]float64 `yaml:"center"`
+	Center      [3]float64 `yaml:"center"`
 }
 
 type VectorLayer struct {

@@ -8,7 +8,7 @@ metadata:
   description: description for tilejson, optional
   version: version for tilejson, optional
   attribution: attribution for tilejson, optional
-  center: [0, 0] # center for tilejson, optional
+  center: [0, 0, 4] # center for tilejson, optional
 vector_layers:
   water:
     fields:
