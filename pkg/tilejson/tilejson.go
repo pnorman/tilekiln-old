@@ -45,6 +45,7 @@ type TileJSON struct {
 	VectorLayers []VectorLayer `json:"vector_layers"`
 	Attribution  string        `json:"attribution,omitempty"`
 	Bounds       [4]float64    `json:"bounds,omitempty"`
+	Center       [3]float64    `json:"center",omitempty`
 	Description  string        `json:"description,omitempty"`
 	Maxzoom      uint8         `json:"maxzoom,omitempty"`
 	Minzoom      uint8         `json:"minzoom,omitempty"`
@@ -65,6 +66,7 @@ func GenerateTileJSON(config config.Config, host string) ([]byte, error) {
 		Name:         config.Metadata.Name,
 		Scheme:       SchemeXYZ,
 		Version:      config.Metadata.Version,
+		Center:       config.Metadata.Center,
 	}
 	/* Still need to handle vector layers, min/max zoom */
 

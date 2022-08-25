@@ -40,8 +40,8 @@ type VectorLayer struct {
 }
 
 type Config struct {
-	Metadata     Metadata    `yaml:"metadata"`
-	VectorLayers VectorLayer `yaml:"vector_layer"`
+	Metadata     Metadata      `yaml:"metadata"`
+	VectorLayers []VectorLayer `yaml:"vector_layer"`
 }
 
 func LoadConfig(file string) Config {
