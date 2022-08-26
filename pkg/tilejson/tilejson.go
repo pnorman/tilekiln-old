@@ -36,10 +36,11 @@ var worldBounds = [4]float64{-180, -85.05112877980659, 180, 85.0511287798066}
 of TileJSON fields */
 
 type VectorLayer struct {
-	Id          string `json:"id"`
-	Description string `json:"description,omitempty"`
-	Minzoom     uint8  `json:"minzoom,omitempty"`
-	Maxzoom     uint8  `json:"maxzoom,omitempty"`
+	Id          string            `json:"id"`
+	Description string            `json:"description,omitempty"`
+	Minzoom     uint8             `json:"minzoom,omitempty"`
+	Maxzoom     uint8             `json:"maxzoom,omitempty"`
+	Fields      map[string]string `json:"fields,omitempty"`
 	/* TODO: fields */
 }
 
@@ -49,7 +50,7 @@ type TileJSON struct {
 	VectorLayers []VectorLayer `json:"vector_layers"`
 	Attribution  string        `json:"attribution,omitempty"`
 	Bounds       [4]float64    `json:"bounds,omitempty"`
-	Center       [3]float64    `json:"center",omitempty`
+	Center       [3]float64    `json:"center,omitempty"`
 	Description  string        `json:"description,omitempty"`
 	Maxzoom      uint8         `json:"maxzoom,omitempty"`
 	Minzoom      uint8         `json:"minzoom,omitempty"`
@@ -67,6 +68,11 @@ func GenerateTileJSON(config config.Config, host string) ([]byte, error) {
 		var layer VectorLayer
 		layer.Id = name
 		layer.Description = configLayer.Description
+
+		layer.Fields = configLayer.Fields
+
+		/* Computing the min and max zoom requires looking at the range of
+		   zooms covered by the SQL */
 		var layerMaxzoom, layerMinzoom uint8
 		for _, sqlDefinition := range configLayer.Sql {
 			if sqlDefinition.Maxzoom > layerMaxzoom {
@@ -79,6 +85,8 @@ func GenerateTileJSON(config config.Config, host string) ([]byte, error) {
 		layer.Maxzoom = layerMaxzoom
 		layer.Minzoom = layerMinzoom
 		layers = append(layers, layer)
+
+		/* Use max/min zoom from this layer to update global max/min zoom */
 		if layerMaxzoom > maxzoom {
 			maxzoom = layerMaxzoom
 		}
@@ -86,6 +94,7 @@ func GenerateTileJSON(config config.Config, host string) ([]byte, error) {
 			minzoom = layerMinzoom
 		}
 	}
+
 	result := TileJSON{
 		TileJSON:     Version,
 		Tiles:        []string{fmt.Sprintf("%s{z}/{x}/{y}.mvt", host)},
