@@ -71,17 +71,10 @@ func GenerateTileJSON(config config.Config, host string) ([]byte, error) {
 
 		layer.Fields = configLayer.Fields
 
-		/* Computing the min and max zoom requires looking at the range of
-		   zooms covered by the SQL */
-		var layerMaxzoom, layerMinzoom uint8
-		for _, sqlDefinition := range configLayer.Sql {
-			if sqlDefinition.Maxzoom > layerMaxzoom {
-				layerMaxzoom = sqlDefinition.Maxzoom
-			}
-			if sqlDefinition.Minzoom > layerMinzoom {
-				layerMinzoom = sqlDefinition.Minzoom
-			}
-		}
+		/* Save the max/min zoom for use later */
+		layerMaxzoom := configLayer.Maxzoom()
+		layerMinzoom := configLayer.Minzoom()
+
 		layer.Maxzoom = layerMaxzoom
 		layer.Minzoom = layerMinzoom
 		layers = append(layers, layer)

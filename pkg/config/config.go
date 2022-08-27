@@ -53,6 +53,26 @@ type Config struct {
 	VectorLayers map[string]VectorLayer `yaml:"vector_layers"`
 }
 
+func (l *VectorLayer) Maxzoom() uint8 {
+	var maxzoom uint8
+	for _, sqlDefinition := range l.Sql {
+		if sqlDefinition.Maxzoom > maxzoom {
+			maxzoom = sqlDefinition.Maxzoom
+		}
+	}
+	return maxzoom
+}
+
+func (l *VectorLayer) Minzoom() uint8 {
+	var minzoom uint8
+	for _, sqlDefinition := range l.Sql {
+		if sqlDefinition.Minzoom > minzoom {
+			minzoom = sqlDefinition.Minzoom
+		}
+	}
+	return minzoom
+}
+
 func LoadConfig(file string) Config {
 	f, err := ioutil.ReadFile(file)
 	if err != nil {
